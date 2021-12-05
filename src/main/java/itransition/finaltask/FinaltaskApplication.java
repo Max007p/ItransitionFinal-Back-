@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import security.WebSecurityConfig;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"controllers", "services", "security"})
+@ComponentScan(basePackages = {"controllers", "services", "security", "utils"})
 @EntityScan("entities")
 @EnableJpaRepositories("repositories")
 @Import(WebSecurityConfig.class)

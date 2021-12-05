@@ -11,6 +11,7 @@ import repositories.TagRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -18,7 +19,8 @@ public class TagService {
     @Autowired
     TagRepository tagRepository;
 
-    public List<Tag> getAllTags(int pageSize){
-        return tagRepository.findAll(PageRequest.of(0, pageSize)).getContent();
+    public List<String> getAllTags(int pageSize){
+        return tagRepository.findAll(PageRequest.of(0, pageSize)).getContent()
+                .stream().map(value -> new String(value.getName())).collect(Collectors.toList());
     }
 }

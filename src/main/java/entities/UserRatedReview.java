@@ -1,17 +1,21 @@
 package entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @IdClass(UserRatedReviewId.class)
 @Table(name = "user_review_rate")
 public class UserRatedReview implements Serializable{
 
-    @Column(name = "rating")
+    @Column(name = "rating", precision=10, scale=2)
     private Double rating;
 
     @Id

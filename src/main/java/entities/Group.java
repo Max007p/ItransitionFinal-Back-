@@ -2,15 +2,17 @@ package entities;
 
 import enums.ReviewGroups;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "group_table")
 public class Group {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,6 +22,7 @@ public class Group {
     @Column(name = "name", unique = true)
     private ReviewGroups groups;
 
-    @ManyToMany(mappedBy = "reviewGroups")
-    private List<Review> reviews;
+    public Group(ReviewGroups groups) {
+        this.groups = groups;
+    }
 }

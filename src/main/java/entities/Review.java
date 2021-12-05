@@ -6,20 +6,20 @@ import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.hibernate.search.annotations.TermVector;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 @Entity
 @Data
-@ToString
 @Indexed
+@DynamicUpdate
 @Table(name = "review")
 public class Review {
     @Id
@@ -35,50 +35,63 @@ public class Review {
     @Column(name = "text")
     private String text;
 
+    @Column(name = "review_rating")
+    private double reviewRating;
+
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
-    @Column(name = "creation_date")
+    @Column(name = "creation_date", updatable = false)
     private Date creation;
 
-    @JsonIgnore
-    @ToString.Exclude
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
     private User author;
 
     @IndexedEmbedded
-    @JsonIgnore
-    @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "review", orphanRemoval=true)
     @Cascade(CascadeType.ALL)
-    @JoinColumn(name = "review_id", referencedColumnName = "id")
     private List<Comment> comments;
 
-    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
+    @Cascade(CascadeType.ALL)
     @JoinTable(
             name = "review_group",
             joinColumns = @JoinColumn(name = "review_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "id"))
-    private Set<Group> reviewGroups;
+    private Set<Group> reviewGroups = new HashSet<>();
 
-    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
+    @Cascade(CascadeType.ALL)
     @JoinTable(
             name = "review_tag",
             joinColumns = @JoinColumn(name = "review_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-    private Set<Tag> reviewTags;
+    private Set<Tag> reviewTags = new HashSet<>();
 
-    @JsonIgnore
-    @ToString.Exclude
     @ManyToMany(mappedBy = "likedReviews")
-    private List<User> usersWhoLiked;
+    private List<User> usersWhoLiked = new ArrayList<>();
 
-    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "review")
     @Cascade(CascadeType.ALL)
-    private List<UserRatedReview> usersWhoRated;
+    private List<UserRatedReview> usersWhoRated = new ArrayList<>();
+
+    public void removeUserWhoLiked(User user){
+        this.getUsersWhoLiked().remove(user);
+        user.getLikedReviews().remove(this);
+    }
+
+    public void addUserWhoLiked(User user){
+        this.getUsersWhoLiked().add(user);
+        user.getLikedReviews().add(this);
+    }
+
+    public void removeRatedReviews(UserRatedReview user){
+        this.getUsersWhoRated().remove(user);
+    }
+
+    public void addRatedReviews(UserRatedReview user){
+        this.getUsersWhoRated().add(user);
+    }
 
 }

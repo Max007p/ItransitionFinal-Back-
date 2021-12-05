@@ -2,6 +2,7 @@ package controllers;
 
 import entities.request.LoginRequest;
 import entities.request.SignUpRequest;
+import entities.response.JwtResponse;
 import entities.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +19,12 @@ public class AuthController {
     UserService userService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<JwtResponse> loginUser(@RequestBody LoginRequest loginRequest) {
         return userService.returnGeneratedJwtByUsername(loginRequest);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
+    public ResponseEntity<MessageResponse> registerUser(@RequestBody SignUpRequest signUpRequest) {
         return userService.returnStatusMessage(signUpRequest);
     }
 }

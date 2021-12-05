@@ -13,7 +13,6 @@ import java.util.List;
 
 @Entity
 @Data
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "role")

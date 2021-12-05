@@ -6,8 +6,11 @@ import entities.request.LoginRequest;
 import entities.request.SignUpRequest;
 import entities.response.JwtResponse;
 import entities.response.MessageResponse;
+import entities.response.ReviewResponse;
+import entities.response.UserResponse;
 import enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -79,5 +82,8 @@ public class UserService {
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
+    public List<UserResponse> getAllUsers(){
+        return userRepository.getAllUsers();
+    }
 
 }

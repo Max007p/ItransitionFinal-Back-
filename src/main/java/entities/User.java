@@ -2,6 +2,7 @@ package entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import enums.NetworksName;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,13 +10,14 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
 @Entity
 @Data
-@ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class User {
     @Id
@@ -40,7 +42,6 @@ public class User {
     @Column(name = "social_network_username")
     private String socialNetworkUserName;
 
-    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
@@ -49,8 +50,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Set<UserRole> roles;
 
-    @JsonIgnore
-    @ToString.Exclude
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_review_like",
@@ -58,13 +57,21 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "review_id", referencedColumnName = "id"))
     private Set<Review> likedReviews;
 
-    @JsonIgnore
     @ToString.Exclude
     @OneToMany(mappedBy = "user")
+    @Cascade(CascadeType.ALL)
     private List<UserRatedReview> ratedReviews;
 
     public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
+    }
+
+    public void removeRatedReviews(UserRatedReview user){
+        this.getRatedReviews().remove(user);
+    }
+
+    public void addRatedReviews(UserRatedReview user){
+        this.getRatedReviews().add(user);
     }
 }

@@ -2,12 +2,15 @@ package entities;
 
 import enums.ReviewGroups;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "tag")
 public class Tag {
     @Id
@@ -18,4 +21,7 @@ public class Tag {
     @Column(name = "name", unique = true)
     private String name;
 
+    public Tag(String name) {
+        this.name = name;
+    }
 }

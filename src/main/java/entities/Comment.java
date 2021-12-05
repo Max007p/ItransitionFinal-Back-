@@ -1,6 +1,8 @@
 package entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.search.annotations.Field;
@@ -14,15 +16,16 @@ import java.util.Date;
 @Data
 @ToString
 @Indexed
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "comment")
 public class Comment {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User author;
 
@@ -35,4 +38,13 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="review_id", referencedColumnName = "id")
+    private Review review;
+
+    public Comment(User author, String text, Review review) {
+        this.author = author;
+        this.text = text;
+        this.review = review;
+    }
 }
