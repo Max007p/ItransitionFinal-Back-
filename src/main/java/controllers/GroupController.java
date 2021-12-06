@@ -7,7 +7,7 @@ import services.TagService;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/api/group")
 public class GroupController {
@@ -15,7 +15,7 @@ public class GroupController {
     GroupService groupService;
 
     @GetMapping("/all")
-    public List<String> getAllTags(
+    public List<String> getAllGroups(
             @RequestParam(value = "quantity", required = true) int quantity) {
         return groupService.getAllGroups(quantity);
     }

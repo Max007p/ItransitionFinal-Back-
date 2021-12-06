@@ -10,6 +10,7 @@ import lombok.experimental.UtilityClass;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.MapperFactory;
 import ma.glasnost.orika.impl.DefaultMapperFactory;
+import org.codehaus.commons.nullanalysis.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import repositories.GroupRepository;

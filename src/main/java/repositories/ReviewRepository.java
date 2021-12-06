@@ -25,6 +25,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "FROM Review b LEFT JOIN UserRatedReview c ON b.id = c.review.id WHERE b.author.id = ?1 GROUP BY b.id")
     List<ReviewResponse> getReviewsByAuthorId(Long userId);
 
+    @Query(value = "SELECT AVG(c.rating) FROM Review b LEFT JOIN UserRatedReview c ON b.id = c.review.id WHERE b.id = ?1")
+    Double getAvgUsersRating(Long reviewId);
+
     Boolean existsByUsersWhoLikedAndId(User user, Long reviewId);
     Boolean existsByUsersWhoRatedAndId(User user, Long reviewId);
 }

@@ -61,22 +61,26 @@ public class ReviewService {
         QueryBuilder queryBuilder = fullTextEntityManager.getSearchFactory().buildQueryBuilder()
                 .forEntity(Review.class)
                 .get();
-        Query query = queryBuilder.keyword().onFields("text", "title", "comments.text").matching(text)
+        Query query = queryBuilder.keyword()
+                .fuzzy()
+                .withEditDistanceUpTo(2)
+                .withPrefixLength(2)
+                .onFields("text", "title", "comments.text")
+                .matching(text)
                 .createQuery();
         FullTextQuery fullTextQuery = fullTextEntityManager.createFullTextQuery(query, Review.class);
-        fullTextEntityManager.close();
         List<Review> reviews = (List<Review>) fullTextQuery.getResultList();
-        List<ReviewResponse> reviewResponse = new ArrayList<>();
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
         for (Review review: reviews) {
-            reviewResponse.add(ReviewUtils.convertReviewToReviewResponse(review));
+            ReviewResponse reviewResponse = ReviewUtils.convertReviewToReviewResponse(review);
+            reviewResponse.setUsersRating(reviewRepository.getAvgUsersRating(reviewResponse.getReviewId()));
+            reviewResponses.add(reviewResponse);
         }
-        return reviewResponse;
+        return reviewResponses;
     }
 
-    public List<ReviewResponse> getUsersReviewsList(){
-        UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder
-                .getContext().getAuthentication().getPrincipal();
-        return reviewRepository.getReviewsByAuthorId(userDetails.getId());
+    public List<ReviewResponse> getUsersReviewsList(Long userId){
+        return reviewRepository.getReviewsByAuthorId(userId);
     }
 
     public ResponseEntity<MessageResponse> addNewReview(ReviewRequest review){
@@ -155,7 +159,9 @@ public class ReviewService {
 
     public ReviewResponse getReviewById(Long reviewId){
         Review review = reviewRepository.getById(reviewId);
-        return ReviewUtils.convertReviewToReviewResponse(review);
+        ReviewResponse reviewResponse = ReviewUtils.convertReviewToReviewResponse(review);
+        reviewResponse.setUsersRating(reviewRepository.getAvgUsersRating(reviewResponse.getReviewId()));
+        return reviewResponse;
     }
 
     public ResponseEntity<MessageResponse> deleteReviewById(Long reviewId){

@@ -38,6 +38,7 @@ public class Comment {
     @Column(name = "text")
     private String text;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name="review_id", referencedColumnName = "id")
     private Review review;

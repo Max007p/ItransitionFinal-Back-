@@ -48,7 +48,7 @@ public class Review {
     private User author;
 
     @IndexedEmbedded
-    @OneToMany(mappedBy = "review", orphanRemoval=true)
+    @OneToMany(mappedBy = "review")
     @Cascade(CascadeType.ALL)
     private List<Comment> comments;
 

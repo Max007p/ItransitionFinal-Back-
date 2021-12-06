@@ -43,7 +43,7 @@ public class User {
     private String socialNetworkUserName;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @Cascade({ CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
@@ -51,6 +51,7 @@ public class User {
     private Set<UserRole> roles;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @Cascade({CascadeType.SAVE_UPDATE, CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "user_review_like",
             joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),

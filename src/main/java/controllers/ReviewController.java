@@ -9,13 +9,14 @@ import entities.response.ReviewLikeResponse;
 import entities.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import services.ReviewService;
 
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+@CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
 @RestController
 @RequestMapping("/api/review")
 public class ReviewController {
@@ -37,12 +38,20 @@ public class ReviewController {
     @GetMapping("/filter")
     public List<ReviewResponse> getFilteredReviews(
             @RequestParam(value = "text", required = true) String text) throws InterruptedException {
-         return reviewService.getFilteredReviews(text);
+        if (text.equals("")){
+            return reviewService.getMostPopularReviews(5);
+        }
+        else{
+            return reviewService.getFilteredReviews(text);
+        }
     }
 
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("/my_reviews")
-    public List<ReviewResponse> getUsersReviewsList() {
-        return reviewService.getUsersReviewsList();
+    public List<ReviewResponse> getUsersReviewsList(
+            @RequestParam(value = "userId", required = true) Long userId
+    ) {
+        return reviewService.getUsersReviewsList(userId);
     }
 
     @GetMapping("/{reviewId}")
